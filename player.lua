@@ -21,7 +21,10 @@ Player = Class
 		self.movespeed = 500
 		self.movementBounds = Rectangle(vector(96, 64), 
 										vector((screen.width / 2) - 128, screen.height - 128 - game.hud.vertSize))
+		self.sprite.position = self.position
 		self.bounds = self.sprite:getBoundingRect()
+		self.bounds:shrink(vector(0, 64))
+		self.boundsOffset = self.bounds.position - self.position
 
 		self.ouch = false
 		self.collPos = vector(0, 0)
@@ -98,7 +101,7 @@ function Player:updateSprite()
 	self.sprite.position = self.position
 	self.sprite.rotation = self.rotation
 	self.sprite.scale = self.scale
-	self.bounds.position = self.position - self.sprite.origin
+	self.bounds.position = self.position + self.boundsOffset
 end
 
 function Player:draw()

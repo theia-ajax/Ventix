@@ -75,7 +75,6 @@ function Rectangle:getBoundingRect()
 end
 
 function Rectangle:intersectsRect(rect)
-	print(self:left())
 	if self:left() < rect:right() and self:right() > rect:left() and
 	   self:top() < rect:bottom() and self:bottom() > rect:top() then
 		return true
@@ -109,6 +108,20 @@ end
 
 function Rectangle:center()
 	return vector(self.position.x + self.dimensions.x / 2, self.position.y + self.dimensions.y / 2)
+end
+
+function Rectangle:grow(growvec)
+	self.position.x = self.position.x - math.floor(growvec.x / 2)
+	self.position.y = self.position.y - math.floor(growvec.y / 2)
+	self.dimensions.x = self.dimensions.x + growvec.x
+	self.dimensions.y = self.dimensions.y + growvec.y
+end
+
+function Rectangle:shrink(shrinkvec)
+	self.position.x = self.position.x + math.floor(shrinkvec.x / 2)
+	self.position.y = self.position.y + math.floor(shrinkvec.y / 2)
+	self.dimensions.x = self.dimensions.x - shrinkvec.x
+	self.dimensions.y = self.dimensions.y - shrinkvec.y
 end
 
 function Rectangle:draw(r, g, b, a)

@@ -17,7 +17,7 @@ end
 function Collidable:onCollisionStay(other, position, normal)
 end
 
-function Collidable:onCollisionExit(other, position, normal)
+function Collidable:onCollisionExit(other)
 end
 
 function Collidable:isColliding(other)

@@ -127,6 +127,6 @@ function Player:onCollisionStay(other, colPosition, colNormal)
 	self.collPos = colPosition
 end
 
-function Player:onCollisionExit(other, colPosition, colNormal)
+function Player:onCollisionExit(other)
 	self.ouch = false
 end

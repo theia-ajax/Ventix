@@ -87,7 +87,7 @@ end
 function GameObjectManager:draw()
 	local orderedObjects = {};
 	for i = 0, self.objects.n - 1 do
-		if self.objects[i] ~= nil then
+		if self.objects[i] ~= nil and not self.objects[i].hidden then
 			table.insert(orderedObjects, self.objects[i])
 		end
 	end

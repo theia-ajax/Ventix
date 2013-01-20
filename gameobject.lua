@@ -13,6 +13,7 @@ GameObject = Class
 		self.rotation = 0
 		self.scale = vector(1, 1)
 		self.destroy = false
+		self.hidden = false
 	end
 }
 

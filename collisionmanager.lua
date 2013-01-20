@@ -25,6 +25,14 @@ end
 function CollisionManager:unregister(id)
 	local index = self:findIndex(id)
 	if index >= 0 then
+		-- call onCollisionExit for all objects in contact with this one
+		for k, v in pairs(self.objects[index].inContactWith) do
+			otherIndex = self:findIndex(k)
+			if v and otherIndex >= 0 and self.objects[otherIndex] ~= nil then
+				self.objects[otherIndex]:onCollisionExit(self.objects[index])
+			end
+		end
+
 		self.objects[index] = nil
 		self.available:push(index)
 	end

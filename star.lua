@@ -11,9 +11,10 @@ Star = Class
 		GameObject.construct(self)
 		self.type = "Star"
 		self.depth = 100
-		self.speed = math.random() * -1
+		self.speed = math.random() * -10
+		self.radius = game.stars.radius
 		cx, cy = gamecam:pos()
-		self.position = pos or vector(cx + screen.width / 2 + 20, 
+		self.position = pos or vector(cx + screen.width / 2 + self.radius, 
 									  math.random(screen.height - game.hud.vertSize) + (cy - screen.height / 2))
 		self.color = {}
 		self.color.r = math.random(256) - 1
@@ -24,7 +25,7 @@ Star = Class
 
 function Star:update(dt)
 	self.velocity = vector(self.speed, 0)
-	self.position = self.position + self.velocity
+	self.position = self.position + self.velocity * dt
 
 	cx, _ = gamecam:pos()
 	if self.position.x < cx - screen.width / 2 - 20 then
@@ -34,5 +35,9 @@ end
 
 function Star:draw()
 	love.graphics.setColor(self.color.r, self.color.g, self.color.b)
-	love.graphics.circle("fill", self.position.x, self.position.y, 2)
+	if self.radius > 1 then
+		love.graphics.circle("fill", self.position.x, self.position.y, self.radius)
+	else
+		love.graphics.point(self.position.x, self.position.y)
+	end
 end

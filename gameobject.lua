@@ -25,3 +25,6 @@ end
 
 function GameObject:draw()
 end
+
+function GameObject:debugDraw()
+end

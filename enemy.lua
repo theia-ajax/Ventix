@@ -53,5 +53,11 @@ end
 
 function Enemy:draw()
 	self.sprite:draw()
+	if game.debug.on then
+		self:debugDraw()
+	end
+end
+
+function Enemy:debugDraw()
 	self.bounds:draw(0, 255, 255)
 end

@@ -46,7 +46,6 @@ end
 function Projectile:draw()
 	love.graphics.setColor(255, 255, 0)
 	love.graphics.circle("fill", self.position.x, self.position.y, self.radius)
-	love.graphics.setColor(255, 0, 0)
 end
 
 function Projectile:onCollisionEnter(other, colPosition, colNormal)

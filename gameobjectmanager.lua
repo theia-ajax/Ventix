@@ -1,4 +1,5 @@
 Class = require 'hump.class'
+Timer = require 'hump.timer'
 require 'stack'
 require 'queue'
 require 'gameobject'
@@ -13,6 +14,12 @@ GameObjectManager = Class
 		self.available = Stack()
 		self.currentId = 0
 		self.destroyQueue = Queue()
+
+		if game.debug.on then
+			self.debug = {
+				objCount = 0
+			}
+		end
 	end
 }
 
@@ -82,6 +89,14 @@ function GameObjectManager:update(dt)
 	while self.destroyQueue:size() > 0 do
 		self:unregister(self.destroyQueue:pop())
 	end
+
+	if game.debug.on then
+		self:updateDebug()
+	end
+end
+
+function GameObjectManager:updateDebug()
+	self.debug.objCount = self.objects.n - self.available:size()
 end
 
 function GameObjectManager:draw()

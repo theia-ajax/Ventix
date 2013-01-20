@@ -8,6 +8,11 @@ CollisionManager = Class
 		self.objects = {}
 		self.objects.n = 0
 		self.available = Stack()
+		if game.debug.on then
+			self.debug = {
+				objCount = 0
+			}
+		end
 	end
 }
 
@@ -91,4 +96,12 @@ function CollisionManager:update()
 			end
 		end
 	end
+
+	if game.debug.on then
+		self:updateDebug()
+	end
+end
+
+function CollisionManager:updateDebug()
+	self.debug.objCount = self.objects.n - self.available:size()
 end

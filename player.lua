@@ -29,7 +29,7 @@ Player = Class
 		self.ouch = false
 		self.collPos = vector(0, 0)
 
-		self.fireTime = 0.1
+		self.fireTime = 0.05
 		self.fireTimer = 0.0
 	end
 }
@@ -107,6 +107,12 @@ end
 function Player:draw()
 	self.sprite:draw()
 
+	if game.debug.on then
+		self:debugDraw()
+	end
+end
+
+function Player:debugDraw()
 	if self.ouch then
 		self.bounds:draw(255, 0, 0)
 		love.graphics.circle("fill", self.collPos.x, self.collPos.y, 8)

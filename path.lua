@@ -24,16 +24,14 @@ end
 function Path:clear()
 	for k in pairs(self.points) do self.points[k] = nil end
 	for k in pairs(self.curve) do self.curve[k] = nil end
-	table.setn(self.points, 0)
-	table.setn(self.curve, 0)
 end
 
 function Path:getPos(d)
-	if table.getn(self.curve) <= 0 then
+	if #self.curve <= 0 then
 		return vector.zero
 	end
 	if d < 0 then d = 0 elseif d > 1 then d = 0 end
-	return self.curve[math.floor(table.getn(self.curve) * d)] + self.position
+	return self.curve[math.floor(#self.curve * d) + 1] + self.position
 end
 
 function Path:draw()
@@ -55,11 +53,11 @@ LinearPath = Class
 }
 
 function LinearPath:calcLength()
-	if self.points.n < 2 then return 0 end
+	if #self.points < 2 then return 0 end
 
 	local l = 0
 
-	for i = 1, self.points.n - 1 do
+	for i = 1, #self.points - 1 do
 		local p1 = self.points[i]
 		local p2 = self.points[i+1]
 
@@ -70,14 +68,13 @@ function LinearPath:calcLength()
 end
 
 function LinearPath:calcCurve()
-	if self.points.n < 2 then return end
+	if #self.points < 2 then return end
 
 	self.length = self:calcLength()
 
 	for k in pairs(self.curve) do self.curve[k] = nil end
-	table.setn(self.curve, 0)
 
-	for i = 1, self.points.n - 1 do
+	for i = 1, #self.points - 1 do
 		local p1 = self.points[i]
 		local p2 = self.points[i+1]
 		local d = vector.dist(p1, p2)
@@ -85,24 +82,22 @@ function LinearPath:calcCurve()
 		local segCount = d / self.length * self.interp
 
 		for j = 0, segCount - 1 do
-			table.insert(vector.lerp(p1, p2, j / segCount))
+			table.insert(self.curve, vector.lerp(p1, p2, j / segCount))
 		end
-		self.curve[self.curve.n] = p2
-		self.curve.n = self.curve.n + 1
+		table.insert(self.curve, p2)
 	end
 end
 
 function LinearPath:draw()
 	local px, py = self.position.x, self.position.y
 
-	if self.points.n > 1 then
+	if #self.points > 1 then
 		love.graphics.setColor(0, 255, 255)
-		love.graphics.circle("line", self.points[0].x + px, self.points[0].y + py, 4)
 		for k, v in ipairs(self.points) do
 			love.graphics.circle("line", v.x + px, v.y + py, 4)
 		end
 		love.graphics.setColor(0, 255, 0)
-		for i = 0, self.points.n - 2 do
+		for i = 1, #self.points - 1 do
 			local p1 = self.points[i]
 			local p2 = self.points[i+1]
 			love.graphics.line(p1.x + px, p1.y + py, p2.x + px, p2.y + py)
@@ -135,26 +130,21 @@ SplinePath = Class
 }
 
 function SplinePath:calcCurve()
-	if self.points.n < 4 then
+	if #self.points < 4 then
 		return
 	end
 
-	for k in pairs(self.curve) do
-		self.curve[k] = nil
-	end
-	self.curve.n = 0
+	for k in pairs(self.curve) do self.curve[k] = nil end
 
-	for i = 1, self.points.n - 3 do
+	for i = 2, #self.points - 2 do
 		for j = 0, self.interp - 1 do
-			self.curve[self.curve.n] = self:curveSegment(self.points[i - 1], self.points[i + 0],
-														 self.points[i + 1], self.points[i + 2],
-														 j / self.interp)
-			self.curve.n = self.curve.n + 1
+			table.insert(self.curve, self:curveSegment(self.points[i - 1], self.points[i + 0],
+									  				   self.points[i + 1], self.points[i + 2],
+													   j / self.interp))
 		end
 	end
 
-	self.curve[self.curve.n] = self.points[self.points.n - 1]
-	self.curve.n = self.curve.n + 1
+	table.insert(self.curve, self.points[self.points[#self.points]])
 end
 
 function SplinePath:curveSegment(p1, p2, p3, p4, t)
@@ -174,23 +164,22 @@ end
 function SplinePath:draw()
 	local px, py = self.position.x, self.position.y
 
-	if self.points.n > 1 then
+	if #self.points > 1 then
 		love.graphics.setColor(0, 255, 255)
-		love.graphics.circle("line", self.points[0].x + px, self.points[0].y + py, 4)
 		for k, v in ipairs(self.points) do
 			love.graphics.circle("line", v.x + px, v.y + py, 4)
 		end
 		love.graphics.setColor(0, 255, 0)
-		for i = 0, self.points.n - 2 do
+		for i = 1, #self.points - 1 do
 			local p1 = self.points[i]
 			local p2 = self.points[i+1]
 			love.graphics.line(p1.x + px, p1.y + py, p2.x + px, p2.y + py)
 		end
 	end
 
-	if self.curve.n > 1 then
+	if #self.curve > 1 then
 		love.graphics.setColor(255, 0, 0)
-		for i = 0, self.curve.n - 2 do
+		for i = 1, #self.curve - 1 do
 			local p1 = self.curve[i]
 			local p2 = self.curve[i+1]
 			love.graphics.line(p1.x + px, p1.y + py, p2.x + px, p2.y + py)

@@ -38,10 +38,12 @@ function love.load()
 
 	path = SplinePath()
 	path:add(vector(100, 100), false)
-	path:add(vector(125, 150), false)
-	path:add(vector(150, 200), false)
-	path:add(vector(175, 175), false)
-	path:add(vector(200, 100), true)
+	path:add(vector(100, 100), false)
+	path:add(vector(150, 150), false)
+	path:add(vector(200, 200), false)
+	path:add(vector(250, 175), false)
+	path:add(vector(300, 100), false)
+	path:add(vector(300, 100), true)
 	ppt = vector.zero
 	time = 0
 

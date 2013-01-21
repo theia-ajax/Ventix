@@ -105,11 +105,19 @@ function vector:len()
 	return sqrt(self.x * self.x + self.y * self.y)
 end
 
-function vector.dist(a, b)
+local function dist(a, b)
 	assert(isvector(a) and isvector(b), "dist: wrong argument types (<vector> expected)")
 	local dx = a.x - b.x
 	local dy = a.y - b.y
 	return sqrt(dx * dx + dy * dy)
+end
+
+local function lerp(a, b, t)
+	assert(isvector(a) and isvector(b), "lerp: wrong argument types (<vector> expected)")
+
+	local lx = a.x + (b.x - a.x) * t
+	local ly = a.y + (b.y - a.y) * t
+	return new(lx, ly)
 end
 
 function vector:normalize()
@@ -124,7 +132,7 @@ function vector:normalized()
 	return self:clone():normalize_inplace()
 end
 
-function vector:rotate_inplace(phi)
+function vector:rotate(phi)
 	local c, s = cos(phi), sin(phi)
 	self.x, self.y = c * self.x - s * self.y, s * self.x + c * self.y
 	return self
@@ -159,5 +167,17 @@ function vector:cross(v)
 end
 
 -- the module
-return setmetatable({new = new, isvector = isvector},
-	{__call = function(_, ...) return new(...) end})
+return setmetatable(
+	{
+		new = new, 
+		isvector = isvector, 
+		dist = dist, 
+		lerp = lerp,
+		one = new(1, 1),
+		zero = new(0, 0),
+		unit_x = new(1, 0),
+		unit_y = new(0, 1)
+	},
+	{
+		__call = function(_, ...) return new(...) end
+	})

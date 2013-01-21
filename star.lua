@@ -15,7 +15,8 @@ Star = Class
 		self.radius = game.stars.radius
 		cx, cy = gamecam:pos()
 		self.position = pos or vector(cx + screen.width / 2 + self.radius, 
-									  math.random(screen.height - game.hud.vertSize) + (cy - screen.height / 2))
+									  math.random(screen.height - game.hud.vertSize) + 
+									  			  (cy - screen.height / 2))
 		self.color = {}
 		self.color.r = math.random(256) - 1
 		self.color.g = math.random(256) - 1

@@ -15,12 +15,6 @@ require 'path'
 function love.load()
 	initGameConfig()
 
-	path = SplinePath({vector(50, 50), vector(50, 50), 
-					   vector(200, 200), vector(350, 50), 
-					   vector(500, 400), vector(500, 400), n = 6}, 100)
-	ppt = path:getPos(0.5)
-	dist = 0
-
 	p = Player(love.graphics.newImage("assets/player.png"))
 	p.position = vector(200, 200)
 	e = Enemy(love.graphics.newImage("assets/enemy.png"))
@@ -35,13 +29,24 @@ function love.load()
 										 math.random(screen.height - game.hud.vertSize))))
 	end
 
-	text = Text("THIS IS THE HUD", "center", vector(screen.width / 2, screen.height - (game.hud.vertSize / 2)),
+	text = Text("THIS IS THE HUD", "center", 
+				vector(screen.width / 2, screen.height - (game.hud.vertSize / 2)),
 				0, vector(1, 1), 0, 255, 0)
 
 	gameObjects:register(p)
 	gameObjects:register(e)
 
+	path = LinearPath()
+	path:add(vector(100, 100), false)
+	path:add(vector(125, 150), false)
+	path:add(vector(150, 200), false)
+	path:add(vector(175, 175), false)
+	path:add(vector(200, 100), true)
+	ppt = vector.zero
+	time = 0
+
 	Timer.addPeriodic(game.stars.spawnRate, function() gameObjects:register(Star()) end)
+	Timer.addPeriodic(game.debug.gcUpdateRate, function() game.debug.gccount = collectgarbage("count") end)
 end
 
 function love.keypressed(key, unicode)
@@ -64,12 +69,10 @@ function love.update(dt)
 
 	collisionManager:update()
 
-	path.points[4].y = path.points[4].y + 50 * dt
-	path:calcCurve()
-	
-	ppt = path:getPos(dist)
-	dist = dist + 0.5 * dt
-	if dist > 1 then dist = 0 end
+	path.position.x = path.position.x + 20 * dt
+	time = time + 0.25 * dt
+	while time > 1 do time = time - 1 end
+	ppt = path:getPos(time)
 
 	Timer.update(dt)
 end
@@ -85,6 +88,14 @@ function love.draw()
 	love.graphics.rectangle("line", 0, screen.height - game.hud.vertSize, screen.width, game.hud.vertSize)
 	text:draw()
 
+	debugDraw()
+
+	path:draw()
+	love.graphics.circle("fill", ppt.x, ppt.y, 4)
+end
+
+
+function debugDraw()
 	if game.debug.on and game.debug.showHUD then
 		love.graphics.setFont(love.graphics.newFont(12))
 		love.graphics.setColor(0, 0, 0, 127)
@@ -92,13 +103,9 @@ function love.draw()
 		love.graphics.setColor(0, 255, 0)
 		love.graphics.rectangle("line", 5, 5, 200, 100)
 		love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 10, 10)
-		love.graphics.print("Garbage: "..format_num(collectgarbage("count")), 10, 25)
+		love.graphics.print("Garbage: "..format_num(game.debug.gccount), 10, 25)
 		love.graphics.print("GameObjects: "..tostring(gameObjects.debug.objCount), 10, 40)
 		love.graphics.print("Collidables: "..tostring(collisionManager.debug.objCount), 10, 55)
 		love.graphics.print("press 'd' to hide", 50, 90)
 	end
-
-	path:draw()
-	love.graphics.circle("fill", ppt.x, ppt.y, 4)
 end
-

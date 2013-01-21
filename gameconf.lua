@@ -19,7 +19,9 @@ function initGameConfig()
 
 		debug = {
 			on = true,
-			showHUD = false
+			showHUD = false,
+			gccount = 0,
+			gcUpdateRate = 0.5
 		}
 	}
 end

@@ -36,7 +36,7 @@ function love.load()
 	gameObjects:register(p)
 	gameObjects:register(e)
 
-	path = LinearPath()
+	path = SplinePath()
 	path:add(vector(100, 100), false)
 	path:add(vector(125, 150), false)
 	path:add(vector(150, 200), false)

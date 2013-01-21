@@ -6,7 +6,7 @@ Path = Class
 	name = "Path",
 	function(self, points, interp, pos)
 		self.position = pos or vector.zero
-		self.points = points or {n = 0}
+		self.points = points or {}
 		self.interp = interp or 100
 		self.curve = {n = 0}
 		self:calcCurve()
@@ -17,25 +17,23 @@ function Path:calcCurve()
 end
 
 function Path:add(p, recalc)
-	self.points[self.points.n] = p
-	self.points.n = self.points.n + 1	
-
+	table.insert(self.points, p)
 	if recalc then self:calcCurve() end
 end
 
 function Path:clear()
 	for k in pairs(self.points) do self.points[k] = nil end
-	self.points.n = 0
 	for k in pairs(self.curve) do self.curve[k] = nil end
-	self.curve.n = 0
+	table.setn(self.points, 0)
+	table.setn(self.curve, 0)
 end
 
 function Path:getPos(d)
-	if self.curve.n <= 0 then
+	if table.getn(self.curve) <= 0 then
 		return vector.zero
 	end
 	if d < 0 then d = 0 elseif d > 1 then d = 0 end
-	return self.curve[math.floor(self.curve.n * d)] + self.position
+	return self.curve[math.floor(table.getn(self.curve) * d)] + self.position
 end
 
 function Path:draw()
@@ -61,7 +59,7 @@ function LinearPath:calcLength()
 
 	local l = 0
 
-	for i = 0, self.points.n - 2 do
+	for i = 1, self.points.n - 1 do
 		local p1 = self.points[i]
 		local p2 = self.points[i+1]
 
@@ -77,19 +75,17 @@ function LinearPath:calcCurve()
 	self.length = self:calcLength()
 
 	for k in pairs(self.curve) do self.curve[k] = nil end
-	self.curve.n = 0
+	table.setn(self.curve, 0)
 
-	for i = 0, self.points.n - 2 do
+	for i = 1, self.points.n - 1 do
 		local p1 = self.points[i]
 		local p2 = self.points[i+1]
 		local d = vector.dist(p1, p2)
 
-
 		local segCount = d / self.length * self.interp
 
 		for j = 0, segCount - 1 do
-			self.curve[self.curve.n] = vector.lerp(p1, p2, j / segCount)
-			self.curve.n = self.curve.n + 1
+			table.insert(vector.lerp(p1, p2, j / segCount))
 		end
 		self.curve[self.curve.n] = p2
 		self.curve.n = self.curve.n + 1
@@ -148,7 +144,7 @@ function SplinePath:calcCurve()
 	end
 	self.curve.n = 0
 
-	for i = 1, self.points.n - 2 do
+	for i = 1, self.points.n - 3 do
 		for j = 0, self.interp - 1 do
 			self.curve[self.curve.n] = self:curveSegment(self.points[i - 1], self.points[i + 0],
 														 self.points[i + 1], self.points[i + 2],
@@ -180,6 +176,7 @@ function SplinePath:draw()
 
 	if self.points.n > 1 then
 		love.graphics.setColor(0, 255, 255)
+		love.graphics.circle("line", self.points[0].x + px, self.points[0].y + py, 4)
 		for k, v in ipairs(self.points) do
 			love.graphics.circle("line", v.x + px, v.y + py, 4)
 		end

@@ -1,0 +1,1 @@
+.\atlasindexer.exe ..\assets\

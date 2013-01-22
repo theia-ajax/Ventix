@@ -1,6 +1,7 @@
 Timer = require 'hump.timer'
 vector = require 'hump.vector'
 camera = require 'hump.camera'
+atlas = require 'mate.atlas'
 require 'bounds'
 require 'player'
 require 'gameconf'
@@ -19,6 +20,9 @@ function love.load()
 	p.position = vector(200, 200)
 	e = Enemy(love.graphics.newImage("assets/enemy.png"))
 	e.position = vector(800, 200)
+
+	local at = atlas("assets/testpacker.png", "assets/testpacker.json")
+	at:build()
 
 	gamecam = camera()
 	gameObjects = GameObjectManager()

@@ -1,0 +1,52 @@
+{"frames": [
+
+{
+	"filename": "armWave_001.png",
+	"frame": {"x":0,"y":564,"w":152,"h":282},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":152,"h":282},
+	"sourceSize": {"w":152,"h":282}
+},
+{
+	"filename": "armWave_002.png",
+	"frame": {"x":0,"y":282,"w":152,"h":282},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":152,"h":282},
+	"sourceSize": {"w":152,"h":282}
+},
+{
+	"filename": "armWave_003.png",
+	"frame": {"x":304,"y":0,"w":152,"h":282},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":152,"h":282},
+	"sourceSize": {"w":152,"h":282}
+},
+{
+	"filename": "armWave_004.png",
+	"frame": {"x":152,"y":0,"w":152,"h":282},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":152,"h":282},
+	"sourceSize": {"w":152,"h":282}
+},
+{
+	"filename": "armWave_005.png",
+	"frame": {"x":0,"y":0,"w":152,"h":282},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":152,"h":282},
+	"sourceSize": {"w":152,"h":282}
+}],
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "floppyFloop.png",
+	"format": "RGBA8888",
+	"size": {"w":512,"h":1024},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:210ac179601b8eb174474ecdb309dd0c$"
+}
+}

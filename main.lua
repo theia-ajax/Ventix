@@ -2,6 +2,7 @@ Timer = require 'hump.timer'
 vector = require 'hump.vector'
 camera = require 'hump.camera'
 atlas = require 'mate.atlas'
+anim = require 'mate.animation'
 require 'bounds'
 require 'player'
 require 'gameconf'
@@ -21,9 +22,11 @@ function love.load()
 	e = Enemy(love.graphics.newImage("assets/enemy.png"))
 	e.position = vector(800, 200)
 
-	local at = atlas("assets/testpacker.png", "assets/testpacker.json")
+	local at = atlas("assets/floppyFloop.png", "assets/floppyFloop.json")
 	at:build()
-
+	ani = at.animations["armWave"]
+	ani:play(true, false, 0.1)
+	
 	gamecam = camera()
 	gameObjects = GameObjectManager()
 	collisionManager = CollisionManager()
@@ -80,6 +83,8 @@ function love.update(dt)
 	while time > 1 do time = time - 1 end
 	ppt = path:getPos(time)
 
+	ani:update(dt)
+
 	Timer.update(dt)
 end
 
@@ -98,6 +103,9 @@ function love.draw()
 
 	path:draw()
 	love.graphics.circle("fill", ppt.x, ppt.y, 4)
+
+	love.graphics.setColor(255, 255, 255)
+	love.graphics.drawq(ani.image, ani:getFrame(), 0, 0)
 end
 
 

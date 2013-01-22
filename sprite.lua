@@ -40,6 +40,8 @@ function Sprite:getOriginForAlignment(align)
 end
 
 function Sprite:draw()
+	if not self.image then return end
+
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.draw(self.image, self.position.x, self.position.y, self.rotation, 
 					   self.scale.x, self.scale.y, self.origin.x, self.origin.y)

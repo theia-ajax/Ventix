@@ -38,7 +38,7 @@ function Player:init()
 end
 
 function Player:update(dt)
-	self:controls(dt)
+	if game.input.enabled then self:controls(dt) end
 
 	self.position = self.position + self.velocity * dt
 

@@ -18,10 +18,15 @@ function initGameConfig()
 		},
 
 		debug = {
+			con_enable = true,
 			on = true,
 			showHUD = false,
 			gccount = 0,
 			gcUpdateRate = 0.5
+		},
+
+		input = {
+			enabled = true,
 		}
 	}
 end

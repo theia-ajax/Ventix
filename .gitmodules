@@ -1,3 +1,6 @@
 [submodule "hump"]
 	path = hump
 	url = https://github.com/tedajax/hump
+[submodule "love-console"]
+	path = love-console
+	url = git@github.com:tedajax/love-console.git

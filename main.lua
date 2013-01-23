@@ -5,6 +5,7 @@ atlas = require 'mate.atlas'
 anim = require 'mate.animation'
 animObject = require 'mate.animObject'
 atlasBatch = require 'mate.atlasBatch'
+console = require 'love-console.console'
 require 'bounds'
 require 'player'
 require 'gameconf'
@@ -18,6 +19,8 @@ require 'path'
 
 function love.load()
 	initGameConfig()
+
+	love.graphics.setFont(love.graphics.newFont())
 
 	p = Player(love.graphics.newImage("assets/player.png"))
 	p.position = vector(200, 200)
@@ -62,8 +65,15 @@ function love.load()
 	ppt = vector.zero
 	time = 0
 
+	gameConsole = console.new(love.graphics.newFont("love-console/VeraMono.ttf", 12),
+	                          love.graphics.getWidth(), 200, 4, console_disabled)
+
 	Timer.addPeriodic(game.stars.spawnRate, function() gameObjects:register(Star()) end)
 	Timer.addPeriodic(game.debug.gcUpdateRate, function() game.debug.gccount = collectgarbage("count") end)
+end
+
+function console_disabled()
+	game.input.enabled = true
 end
 
 function love.keypressed(key, unicode)
@@ -85,6 +95,11 @@ function love.keypressed(key, unicode)
 			aObj:resume()
 		end
 	end
+
+	if key == "`" and game.debug.con_enable then
+		gameConsole:focus()
+		game.input.enabled = false
+	end
 end
 
 function love.update(dt)
@@ -99,6 +114,8 @@ function love.update(dt)
 	ppt = path:getPos(time)
 
 	aObj:update(dt)
+
+	gameConsole:update(dt)
 
 	Timer.update(dt)
 end
@@ -120,7 +137,9 @@ function love.draw()
 	love.graphics.circle("fill", ppt.x, ppt.y, 4)
 
 	love.graphics.setColor(255, 255, 255)
-	aObj:draw(0, 0)
+	aObj:draw(0, 300)
+
+	gameConsole:draw()
 end
 
 
@@ -137,4 +156,8 @@ function debugDraw()
 		love.graphics.print("Collidables: "..tostring(collisionManager.debug.objCount), 10, 55)
 		love.graphics.print("press 'd' to hide", 50, 90)
 	end
+end
+
+function quit()
+	love.event.push("quit")
 end

@@ -3,6 +3,8 @@ vector = require 'hump.vector'
 camera = require 'hump.camera'
 atlas = require 'mate.atlas'
 anim = require 'mate.animation'
+animObject = require 'mate.animObject'
+atlasBatch = require 'mate.atlasBatch'
 require 'bounds'
 require 'player'
 require 'gameconf'
@@ -22,11 +24,17 @@ function love.load()
 	e = Enemy(love.graphics.newImage("assets/enemy.png"))
 	e.position = vector(800, 200)
 
-	local at = atlas("assets/floppyFloop.png", "assets/floppyFloop.json")
-	at:build()
-	ani = at.animations["armWave"]
-	ani:play(true, false, 0.1)
-	
+	atlases = atlasBatch()
+	atlases:load("assets/atlasindex.json")
+
+	-- local at = atlas("assets/floppyFloop.png", "assets/floppyFloop.json")
+	-- at:build()
+	aObj = animObject()
+	aObj:add(atlases, "armWave")
+	aObj:play(true, false, 0.1)
+	-- aObj:setFrame(1)
+
+
 	gamecam = camera()
 	gameObjects = GameObjectManager()
 	collisionManager = CollisionManager()
@@ -69,10 +77,17 @@ function love.keypressed(key, unicode)
 	if key == "\\" then
 		game.debug.on = not game.debug.on
 	end
+
+	if key == "r" then
+		if aObj.playing then
+			aObj:pause()
+		else
+			aObj:resume()
+		end
+	end
 end
 
 function love.update(dt)
-
 	gameObjects:update(dt)
 	gamecam:move(game.scrollSpeed * dt, 0)
 
@@ -83,7 +98,7 @@ function love.update(dt)
 	while time > 1 do time = time - 1 end
 	ppt = path:getPos(time)
 
-	ani:update(dt)
+	aObj:update(dt)
 
 	Timer.update(dt)
 end
@@ -105,7 +120,7 @@ function love.draw()
 	love.graphics.circle("fill", ppt.x, ppt.y, 4)
 
 	love.graphics.setColor(255, 255, 255)
-	love.graphics.drawq(ani.image, ani:getFrame(), 0, 0)
+	aObj:draw(0, 0)
 end
 
 

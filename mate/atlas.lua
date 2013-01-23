@@ -1,4 +1,4 @@
-anim = require 'mate.animation'
+local anim = require 'mate.animation'
 local json = require 'mate.dkjson'
 
 local assert = assert
@@ -18,6 +18,8 @@ local function isatlas(a)
 end
 
 function atlas:build()
+	if self.built then return false end
+
 	self.image = love.graphics.newImage(self.imgfile)
 	local filedata = love.filesystem.read(self.datafile)
 
@@ -61,20 +63,23 @@ function atlas:build()
 				local name = string.sub(frame.filename, string.find("."))
 				local simg = {
 					name = name,
-					quad = love.graphics.newQuad(frame.frame.x, frame.frame.y,
-					                             frame.frame.w, frame.frame.h,
-					                             self.width, self.height)
+					frame = love.graphics.newQuad(frame.frame.x, frame.frame.y,
+					                              frame.frame.w, frame.frame.h,
+					                              self.width, self.height)
 				}
-				table.insert(self.statics, simg)
+				if not self.statics[name] then
+					self.statics[name] = simg
+				end
 			end
 		end
 	end
-	built = true
+
+	self.built = true
 	return true
 end
 
 function atlas:batch()
-	if built then
+	if self.built then
 		return self.batch
 	else
 		return nil
@@ -82,7 +87,7 @@ function atlas:batch()
 end
 
 function atlas:frames()
-	if built then
+	if self.built then
 		return self.statics, self.animations
 	else
 		return nil

@@ -1,6 +1,6 @@
 Class = require 'hump.class'
 vector = require 'hump.vector'
-Signals = require 'hump.signals'
+Signal = require 'hump.signal'
 require 'collidable'
 require 'gameconf'
 
@@ -21,15 +21,15 @@ Trigger = Class
 }
 
 function Trigger:onCollisionEnter(other, position, normal)
-	if self.enter then Signals.emit(self.enter, self.id) end
+	if self.enter then Signal.emit(self.enter, self.id) end
 end
 
 function Trigger:onCollisionStay(other, position, normal)
-	if self.stay then Signals.emit(self.stay, self.id) end
+	if self.stay then Signal.emit(self.stay, self.id) end
 end
 
 function Trigger:onCollisionExit(other, position, normal)
-	if self.exit then Signals.emit(self.exit, self.id) end
+	if self.exit then Signal.emit(self.exit, self.id) end
 end
 
 function Trigger:draw()

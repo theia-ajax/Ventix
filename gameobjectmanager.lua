@@ -10,9 +10,8 @@ GameObjectManager = Class
 {
 	function(self)
 		self.objects = {}
-		self.objects.n = 0
 		self.available = Stack()
-		self.currentId = 0
+		self.currentId = 1
 		self.destroyQueue = Queue()
 
 		if game.debug.on then
@@ -24,64 +23,40 @@ GameObjectManager = Class
 }
 
 function GameObjectManager:register(obj)
-	index = 0
-	if self.available:size() > 0 then
-		index = self.available:pop()
-	else
-		index = self.objects.n
-		self.objects.n = self.objects.n + 1
-	end
+	if obj.id > 0 then return end
 	obj.id = self:nextId()
-	self.objects[index] = obj
+	self.objects[obj.id] = obj
 	if obj:is_a(Collidable) then
 		collisionManager:register(obj)
 	end
 end
 
 function GameObjectManager:unregister(id)
-	index = self:findIndex(id)
-	if index >= 0 then
-		if self.objects[index]:is_a(Collidable) then
-			collisionManager:unregister(self.objects[index].id)
-		end
-		self.objects[index] = nil
-		self.available:push(index)
+	if self.objects[id] then
+		self.objects[id] = nil
+		self.available:push(id)
 	end
 end
 
 function GameObjectManager:find(id)
-	index = self:findIndex(id)
-	if index >= 0 then
-		return self.objects[index]
-	else
-		return nil
-	end
-end
-
-function GameObjectManager:findIndex(id)
-	for i = 0, self.objects.n - 1 do
-		if self.objects[i] ~= nil then
-			obj = self.objects[i]
-			if obj.id == id then
-				return i
-			end
-		end
-	end
-
-	return -1
+	return self.objects[id]
 end
 
 function GameObjectManager:nextId()
-	self.currentId = self.currentId + 1
-	return self.currentId - 1
+	if self.available:size() > 0 then
+		return self.available:pop()
+	else
+		self.currentId = self.currentId + 1
+		return self.currentId - 1
+	end
 end
 
 function GameObjectManager:update(dt)
-	for i = 0, self.objects.n - 1 do
-		if self.objects[i] ~= nil then
-			self.objects[i]:update(dt)
-			if self.objects[i].destroy then
-				self.destroyQueue:push(self.objects[i].id)
+	for i, obj in pairs(self.objects) do
+		if obj ~= nil then
+			obj:update(dt)
+			if obj.destroy then
+				self.destroyQueue:push(obj.id)
 			end
 		end
 	end
@@ -96,14 +71,14 @@ function GameObjectManager:update(dt)
 end
 
 function GameObjectManager:updateDebug()
-	self.debug.objCount = self.objects.n - self.available:size()
+	self.debug.objCount = self.currentId - self.available:size()
 end
 
 function GameObjectManager:draw()
 	local orderedObjects = {};
-	for i = 0, self.objects.n - 1 do
-		if self.objects[i] ~= nil and not self.objects[i].hidden then
-			table.insert(orderedObjects, self.objects[i])
+	for i, obj in pairs(self.objects) do
+		if obj ~= nil and not obj.hidden then
+			table.insert(orderedObjects, obj)
 		end
 	end
 	table.sort(orderedObjects, function(a, b) return a.depth > b.depth 	end)

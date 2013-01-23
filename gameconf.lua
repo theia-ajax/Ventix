@@ -27,6 +27,8 @@ function initGameConfig()
 
 		input = {
 			enabled = true,
-		}
+		},
+
+		version = "0.1"
 	}
 end

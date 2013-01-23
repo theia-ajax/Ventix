@@ -4,7 +4,8 @@ vector = require 'hump.vector'
 Collidable = Class
 {
 	name = "Collidable",
-	function(self)
+	function(self, t)
+		self.type = t or ""
 		self.tags = {default = true}
 		self.inContactWith = {}
 		self.bounds = Rectangle(vector(0, 0), vector(0, 0))

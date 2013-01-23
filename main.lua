@@ -1,3 +1,4 @@
+_print = print
 Timer = require 'hump.timer'
 vector = require 'hump.vector'
 camera = require 'hump.camera'
@@ -5,7 +6,7 @@ atlas = require 'mate.atlas'
 anim = require 'mate.animation'
 animObject = require 'mate.animObject'
 atlasBatch = require 'mate.atlasBatch'
-console = require 'love-console.console'
+Console = require 'love-console.console'
 require 'bounds'
 require 'player'
 require 'gameconf'
@@ -16,6 +17,7 @@ require 'star'
 require 'text'
 require 'numformat'
 require 'path'
+require 'trigger'
 
 function love.load()
 	initGameConfig()
@@ -32,9 +34,9 @@ function love.load()
 
 	-- local at = atlas("assets/floppyFloop.png", "assets/floppyFloop.json")
 	-- at:build()
-	aObj = animObject()
-	aObj:add(atlases, "armWave")
-	aObj:play(true, false, 0.1)
+	-- aObj = animObject()
+	-- aObj:add(atlases, "armWave")
+	-- aObj:play(true, false, 0.05)
 	-- aObj:setFrame(1)
 
 
@@ -54,19 +56,20 @@ function love.load()
 	gameObjects:register(p)
 	gameObjects:register(e)
 
-	path = SplinePath()
-	path:add(vector(100, 100), false)
-	path:add(vector(100, 100), false)
-	path:add(vector(150, 150), false)
-	path:add(vector(200, 200), false)
-	path:add(vector(250, 175), false)
-	path:add(vector(300, 100), false)
-	path:add(vector(300, 100), true)
-	ppt = vector.zero
-	time = 0
-
-	gameConsole = console.new(love.graphics.newFont("love-console/VeraMono.ttf", 12),
+	-- path = SplinePath()
+	-- path:add(vector(100, 100), false)
+	-- path:add(vector(100, 100), false)
+	-- path:add(vector(150, 150), false)
+	-- path:add(vector(200, 200), false)
+	-- path:add(vector(250, 175), false)
+	-- path:add(vector(300, 100), false)
+	-- path:add(vector(300, 100), true)
+	
+	console = Console.new(love.graphics.newFont("love-console/VeraMono.ttf", 12),
 	                          love.graphics.getWidth(), 200, 4, console_disabled)
+	startup()
+
+	gameObjects:register(Trigger(function() print("Hit Trigger") end, 400))
 
 	Timer.addPeriodic(game.stars.spawnRate, function() gameObjects:register(Star()) end)
 	Timer.addPeriodic(game.debug.gcUpdateRate, function() game.debug.gccount = collectgarbage("count") end)
@@ -97,7 +100,7 @@ function love.keypressed(key, unicode)
 	end
 
 	if key == "`" and game.debug.con_enable then
-		gameConsole:focus()
+		console:focus()
 		game.input.enabled = false
 	end
 end
@@ -108,14 +111,9 @@ function love.update(dt)
 
 	collisionManager:update()
 
-	path.position.x = path.position.x + 20 * dt
-	time = time + 0.25 * dt
-	while time > 1 do time = time - 1 end
-	ppt = path:getPos(time)
+	-- aObj:update(dt)
 
-	aObj:update(dt)
-
-	gameConsole:update(dt)
+	console:update(dt)
 
 	Timer.update(dt)
 end
@@ -133,13 +131,12 @@ function love.draw()
 
 	debugDraw()
 
-	path:draw()
-	love.graphics.circle("fill", ppt.x, ppt.y, 4)
+	-- path:draw()
 
-	love.graphics.setColor(255, 255, 255)
-	aObj:draw(0, 300)
+	-- love.graphics.setColor(255, 255, 255)
+	-- aObj:draw(0, 300)
 
-	gameConsole:draw()
+	console:draw()
 end
 
 
@@ -158,6 +155,35 @@ function debugDraw()
 	end
 end
 
+----------------------------------
+--		Console Functions       --
+----------------------------------
+
 function quit()
 	love.event.push("quit")
 end
+exit = quit
+
+function print(...)
+	return console:print(...)
+end
+
+function printf(fmt, ...)
+	return print(string.format(fmt, ...))
+end
+
+function clear()
+	console:clear()
+	startup()
+end
+
+function startup()
+	print("  Ventix  v"..game.version)
+	print()
+	print("  <Escape> or ~ leaves the console. Call quit() or exit() to quit.")
+	print("  Try hitting <Tab> to complete your current input.")
+	print("  Type help() for commands and usage")
+	print("  You can overwrite every love callback (but love.keypressed).")
+	print()	
+end
+

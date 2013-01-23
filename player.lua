@@ -14,9 +14,8 @@ Player = Class
 	inherits = {GameObject, Collidable},
 	function(self, img)
 		GameObject.construct(self, vector(30, screen.height / 2))
-		Collidable.construct(self)
-		self.type = "Player"
-		self.tags = {Enemy = true, EnemyShot = true}
+		Collidable.construct(self, "Player")
+		self.tags = {Enemy = true, EnemyShot = true, Trigger =true}
 		self.sprite = Sprite(img)
 		self.movespeed = 500
 		self.movementBounds = Rectangle(vector(96, 64), 

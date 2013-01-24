@@ -171,7 +171,6 @@ end
 
 function clear()
 	console:clear()
-	startup()
 end
 
 function startup()

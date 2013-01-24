@@ -84,9 +84,6 @@ function love.keypressed(key, unicode)
 		love.event.push("quit")
 	end
 
-	if game.debug.on and key == "d" then
-		game.debug.showHUD = not game.debug.showHUD
-	end
 	if key == "\\" then
 		game.debug.on = not game.debug.on
 	end
@@ -151,7 +148,7 @@ function debugDraw()
 		love.graphics.print("Garbage: "..format_num(game.debug.gccount), 10, 25)
 		love.graphics.print("GameObjects: "..tostring(gameObjects.debug.objCount), 10, 40)
 		love.graphics.print("Collidables: "..tostring(collisionManager.debug.objCount), 10, 55)
-		love.graphics.print("press 'd' to hide", 50, 90)
+		-- love.graphics.print("press 'd' to hide", 50, 90)
 	end
 end
 
@@ -184,6 +181,15 @@ function startup()
 	print("  Try hitting <Tab> to complete your current input.")
 	print("  Type help() for commands and usage")
 	print("  You can overwrite every love callback (but love.keypressed).")
-	print()	
+	print()
+
+	debughud(1)
 end
 
+function debughud(val)
+	if val == 0 then
+		game.debug.showHUD = false
+	elseif val == 1 then
+		game.debug.showHUD = true
+	end
+end

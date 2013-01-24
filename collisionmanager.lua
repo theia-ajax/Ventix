@@ -6,8 +6,6 @@ CollisionManager = Class
 {
 	function(self)
 		self.objects = {}
-		self.objects.n = 0
-		self.available = Stack()
 		if game.debug.on then
 			self.debug = {
 				objCount = 0
@@ -17,14 +15,22 @@ CollisionManager = Class
 }
 
 function CollisionManager:register(obj)
-	local index = 0
-	if self.available:size() > 0 then
-		index = self.available:pop()
-	else
-		index = self.objects.n
-		self.objects.n = self.objects.n + 1
+
+	-- Check to see if the new objects is already colliding with anything
+	local obj1 = obj
+	for i, obj2 in ipairs(self.objects) do 
+		if obj2.tags[obj1.type] and obj1.tags[obj2.type] then
+			c1, pos1, norm1 = obj1:isColliding(obj2)
+			c2, pos2, norm2 = obj2:isColliding(obj1)
+			if c1 or c2 then
+				obj1:onCollisionEnter(obj2, pos1, norm1)
+				obj2:onCollisionEnter(obj1, pos2, norm2)
+				obj1.inContactWith[obj2.id] = true
+				obj2.inContactWith[obj1.id] = true
+			end
+		end
 	end
-	self.objects[index] = obj
+	table.insert(self.objects, obj)
 end
 
 function CollisionManager:unregister(id)
@@ -38,8 +44,7 @@ function CollisionManager:unregister(id)
 			end
 		end
 
-		self.objects[index] = nil
-		self.available:push(index)
+		table.remove(self.objects, index)
 	end
 end
 
@@ -53,19 +58,17 @@ function CollisionManager:find(id)
 end
 
 function CollisionManager:findIndex(id)
-	for i = 0, self.objects.n - 1 do
-		local obj = self.objects[i]
+	for i, obj in ipairs(self.objects) do
 		if obj ~= nil and obj.id == id then
 			return i
 		end
 	end
-
 	return -1
 end
 
 function CollisionManager:update()
-	for i = 0, self.objects.n - 2 do
-		for j = i + 1, self.objects.n - 1 do
+	for i = 1, #self.objects - 1 do
+		for j = i + 1, #self.objects do
 			local obj1 = self.objects[i]
 			local obj2 = self.objects[j]
 			if obj1 ~= nil and obj2 ~= nil then
@@ -103,5 +106,5 @@ function CollisionManager:update()
 end
 
 function CollisionManager:updateDebug()
-	self.debug.objCount = self.objects.n - self.available:size()
+	self.debug.objCount = #self.objects
 end

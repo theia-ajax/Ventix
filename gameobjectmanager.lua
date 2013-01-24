@@ -33,6 +33,9 @@ end
 
 function GameObjectManager:unregister(id)
 	if self.objects[id] then
+		if self.objects[id]:is_a(Collidable) then
+			collisionManager:unregister(id)
+		end
 		self.objects[id] = nil
 		self.available:push(id)
 	end

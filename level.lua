@@ -1,4 +1,4 @@
-require 'table-save.lua'
+require 'table-save'
 
 Class = require 'hump.class'
 json = require 'util.dkjson'

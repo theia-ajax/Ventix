@@ -14,6 +14,7 @@ Trigger = Class
 		self.bounds.position = vector(x or 0, y or 0)
 		self.bounds.dimensions = vector(w or 5, h or screen.height)
 		self.tags = { Player = true }
+		self.depth = 1
 		self.enter = enter or 'onTriggerEnter'
 		self.stay = stay or 'onTriggerStay'
 		self.exit = exit or 'onTriggerExit'

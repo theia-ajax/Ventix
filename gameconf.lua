@@ -19,7 +19,7 @@ function initGameConfig()
 
 		debug = {
 			con_enable = true,
-			on = true,
+			on = false,
 			showHUD = false,
 			gccount = 0,
 			gcUpdateRate = 0.5
@@ -30,5 +30,10 @@ function initGameConfig()
 		},
 
 		version = "0.1"
+	}
+
+	game.center = {
+		x = 0,
+		y = 0
 	}
 end

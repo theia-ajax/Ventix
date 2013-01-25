@@ -6,11 +6,10 @@ CollisionManager = Class
 {
 	function(self)
 		self.objects = {}
-		if game.debug.on then
-			self.debug = {
-				objCount = 0
-			}
-		end
+
+		self.debug = {
+			objCount = 0
+		}
 	end
 }
 
@@ -30,6 +29,7 @@ function CollisionManager:register(obj)
 			end
 		end
 	end
+	
 	table.insert(self.objects, obj)
 end
 

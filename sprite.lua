@@ -11,6 +11,7 @@ Sprite = Class
 		self.type = "Sprite"
 		self.image = img
 		self.alignment = align or "center"
+		self.color = {255, 255, 255, 255}
 		self.origin = self:getOriginForAlignment(self.alignment)
 	end
 }
@@ -42,7 +43,7 @@ end
 function Sprite:draw()
 	if not self.image then return end
 
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(unpack(self.color))
 	love.graphics.draw(self.image, self.position.x, self.position.y, self.rotation, 
 					   self.scale.x, self.scale.y, self.origin.x, self.origin.y)
 end

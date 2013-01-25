@@ -13,7 +13,7 @@ Star = Class
 		self.depth = 100
 		self.speed = math.random() * -10
 		self.radius = game.stars.radius
-		cx, cy = gamecam:pos()
+		cx, cy = game.camera:pos()
 		self.position = pos or vector(cx + screen.width / 2 + self.radius, 
 									  math.random(screen.height - game.hud.vertSize) + 
 									  			  (cy - screen.height / 2))
@@ -28,7 +28,7 @@ function Star:update(dt)
 	self.velocity = vector(self.speed, 0)
 	self.position = self.position + self.velocity * dt
 
-	cx, _ = gamecam:pos()
+	cx, _ = game.camera:pos()
 	if self.position.x < cx - screen.width / 2 - 20 then
 		self.destroy = true
 	end

@@ -37,7 +37,7 @@ end
 function Projectile:update(dt)
 	self.position = self.position + self.velocity * dt
 	self.bounds.position = self.position
-	cx, cy = gamecam:pos()
+	cx, cy = game.camera:pos()
 	if self.position.x > cx + screen.width / 2 + 10 or self.position.x < cx - screen.width / 2 - 10 then
 		self.destroy = true
 	end

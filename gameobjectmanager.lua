@@ -14,11 +14,9 @@ GameObjectManager = Class
 		self.currentId = 1
 		self.destroyQueue = Queue()
 
-		if game.debug.on then
-			self.debug = {
+		self.debug = {
 				objCount = 0
-			}
-		end
+		}
 	end
 }
 

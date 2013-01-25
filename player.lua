@@ -16,10 +16,13 @@ Player = Class
 		GameObject.construct(self, vector(30, screen.height / 2))
 		Collidable.construct(self, "Player")
 		self.tags = {Enemy = true, EnemyShot = true, Trigger =true}
+		self.depth = 5
 		self.sprite = Sprite(img)
 		self.movespeed = 500
-		self.movementBounds = Rectangle(vector(96, 64), 
-										vector((screen.width / 2) - 128, screen.height - 128 - game.hud.vertSize))
+		self.mbx, self.mby = 96, 64
+		self.movementBounds = Rectangle(vector(self.mbx, self.mby),
+										vector((screen.width / 2) - self.mby * 2,
+											   screen.height - self.mby * 2 - game.hud.vertSize))
 		self.sprite.position = self.position
 		self.bounds = self.sprite:getBoundingRect()
 		self.bounds:shrink(vector(0, 64))
@@ -44,6 +47,8 @@ function Player:update(dt)
 	self:constrainPosition()
 
 	self:updateSprite()
+
+	self.movementBounds.dimensions.y = screen.height - self.mby * 2 - game.hud.vertSize
 end
 
 function Player:controls(dt)
@@ -79,8 +84,8 @@ function Player:shooting(dt)
 end
 
 function Player:constrainPosition()
-	cx, cy = gamecam:pos()
-	cx, cy = cx - screen.width / (2 * gamecam.scale), cy - screen.height / (2 * gamecam.scale)
+	cx, cy = game.camera:pos()
+	cx, cy = cx - screen.width / (2 * game.camera.scale), cy - screen.height / (2 * game.camera.scale)
 	screenpos = self.position - vector(cx, cy)
 	if screenpos.y < self.movementBounds:top() then
 		self.position.y = self.movementBounds:top() + cy
@@ -119,9 +124,9 @@ function Player:debugDraw()
 		self.bounds:draw(0, 255, 0)
 	end
 
-	gamecam:detach()
+	game.camera:detach()
 	self.movementBounds:draw(255, 255, 0)
-	gamecam:attach()
+	game.camera:attach()
 end
 
 function Player:onCollisionEnter(other, colPosition, colNormal)

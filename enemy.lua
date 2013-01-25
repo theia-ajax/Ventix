@@ -1,3 +1,4 @@
+Timer = require 'hump.timer'
 Class = require 'hump.class'
 vector = require 'hump.vector'
 require 'gameobject'
@@ -15,7 +16,7 @@ Enemy = Class
 		Collidable.construct(self)
 		LivingObject.construct(self)
 		self.type = "Enemy"
-		self.depth = 1
+		self.depth = 10
 		self.tags = {Player = true, PlayerShot = true}
 		self.sprite = Sprite(img)
 		self.enemyState = "idle"
@@ -31,6 +32,8 @@ function Enemy:init()
 end
 
 function Enemy:update(dt)
+	self.position.x = self.position.x - 80 * dt
+
 	self:updateSprite()
 
 	if not self.isAlive then
@@ -41,6 +44,8 @@ end
 function Enemy:onCollisionEnter(other, colPosition, colNormal)
 	if other.type == "PlayerShot" then
 		self:damage(10)
+		self.sprite.color = {255, 0, 0, 255}
+		Timer.add(0.1, function() self.sprite.color = {255, 255, 255, 255} end)
 	end
 end
 

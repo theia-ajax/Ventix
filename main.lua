@@ -1,7 +1,9 @@
+dofile('table-save.lua')
+
 _print = print
 Timer = require 'hump.timer'
 vector = require 'hump.vector'
-camera = require 'hump.camera'
+Camera = require 'hump.camera'
 atlas = require 'mate.atlas'
 anim = require 'mate.animation'
 animObject = require 'mate.animobject'
@@ -18,16 +20,16 @@ require 'text'
 require 'numformat'
 require 'path'
 require 'trigger'
+require 'level'
 
 function love.load()
 	initGameConfig()
 
 	love.graphics.setFont(love.graphics.newFont())
 
-	p = Player(love.graphics.newImage("assets/player.png"))
-	p.position = vector(200, 200)
-	e = Enemy(love.graphics.newImage("assets/enemy.png"))
-	e.position = vector(800, 200)
+	game.camera = Camera()
+	game.center.x, game.center.y = game.camera:pos()
+	game.center.y = (game.center.y + (game.center.y - game.hud.vertSize)) / 2
 
 	atlases = atlasBatch()
 	atlases:load("assets/atlasindex.json")
@@ -39,8 +41,6 @@ function love.load()
 	-- aObj:play(true, false, 0.05)
 	-- aObj:setFrame(1)
 
-
-	gamecam = camera()
 	gameObjects = GameObjectManager()
 	collisionManager = CollisionManager()
 
@@ -53,9 +53,19 @@ function love.load()
 				vector(screen.width / 2, screen.height - (game.hud.vertSize / 2)),
 				0, vector(1, 1), 0, 255, 0)
 
-	gameObjects:register(p)
-	gameObjects:register(e)
 
+	p = Player(love.graphics.newImage("assets/player.png"))
+	p.position = vector(200, 200)
+	gameObjects:register(p)
+
+	for i = 1, 50 do
+		local cx, cy = game.camera:pos()
+		local e = Enemy(love.graphics.newImage("assets/enemy.png"))
+		e.position = vector(screen.width + 50 + (250 * i), math.random(64, screen.height - game.hud.vertSize) + 
+									  			  					  (cy - screen.height / 2) - 64)
+		gameObjects:register(e)
+	end
+	
 	-- path = SplinePath()
 	-- path:add(vector(100, 100), false)
 	-- path:add(vector(100, 100), false)
@@ -65,8 +75,8 @@ function love.load()
 	-- path:add(vector(300, 100), false)
 	-- path:add(vector(300, 100), true)
 	
-	console = Console.new(love.graphics.newFont("love-console/VeraMono.ttf", 12),
-	                          love.graphics.getWidth(), 200, 4, console_disabled)
+	game.console = Console.new(love.graphics.newFont("love-console/VeraMono.ttf", 12),
+	                           love.graphics.getWidth(), 200, 4, console_disabled)
 	startup()
 
 	gameObjects:register(Trigger(function() print("Hit Trigger") end, 400))
@@ -97,31 +107,42 @@ function love.keypressed(key, unicode)
 	end
 
 	if key == "`" and game.debug.con_enable then
-		console:focus()
+		game.console:focus()
 		game.input.enabled = false
 	end
 end
 
 function love.update(dt)
 	gameObjects:update(dt)
-	gamecam:move(game.scrollSpeed * dt, 0)
+	game.camera:move(game.scrollSpeed * dt, 0)
+	game.center.x, game.center.y = game.camera:pos()
+	game.center.y = (game.center.y + (game.center.y - game.hud.vertSize)) / 2
 
 	collisionManager:update()
 
 	-- aObj:update(dt)
 
-	console:update(dt)
+	game.console:update(dt)
 
 	Timer.update(dt)
 end
 
 function love.draw()
-	gamecam:attach()
+	game.camera:attach()
 
 	gameObjects:draw()
 
-	gamecam:detach()
+	if game.debug.on then
+		local cx, cy = game.center.x, game.center.y
+		love.graphics.setColor(0, 0, 255)
+		love.graphics.line(cx, cy - 5, cx, cy + 5)
+		love.graphics.line(cx - 5, cy, cx + 5, cy)
+	end
 
+	game.camera:detach()
+
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.rectangle("fill", 0, screen.height - game.hud.vertSize, screen.width, game.hud.vertSize)
 	love.graphics.setColor(0, 255, 0)
 	love.graphics.rectangle("line", 0, screen.height - game.hud.vertSize, screen.width, game.hud.vertSize)
 	text:draw()
@@ -133,7 +154,7 @@ function love.draw()
 	-- love.graphics.setColor(255, 255, 255)
 	-- aObj:draw(0, 300)
 
-	console:draw()
+	game.console:draw()
 end
 
 
@@ -162,7 +183,7 @@ end
 exit = quit
 
 function print(...)
-	return console:print(...)
+	return game.console:print(...)
 end
 
 function printf(fmt, ...)
@@ -170,7 +191,7 @@ function printf(fmt, ...)
 end
 
 function clear()
-	console:clear()
+	game.console:clear()
 end
 
 function startup()
@@ -186,9 +207,9 @@ function startup()
 end
 
 function debughud(val)
-	if val == 0 then
-		game.debug.showHUD = false
-	elseif val == 1 then
+	if val then
 		game.debug.showHUD = true
+	else
+		game.debug.showHUD = false
 	end
 end

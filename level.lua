@@ -1,7 +1,6 @@
 require 'table-save'
 
 Class = require 'hump.class'
-json = require 'util.dkjson'
 vector = require 'hump.vector'
 require 'trigger'
 require 'path'

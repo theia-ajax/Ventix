@@ -1,5 +1,3 @@
-dofile('table-save.lua')
-
 _print = print
 Timer = require 'hump.timer'
 vector = require 'hump.vector'
@@ -9,6 +7,7 @@ anim = require 'mate.animation'
 animObject = require 'mate.animobject'
 atlasBatch = require 'mate.atlasbatch'
 Console = require 'love-console.console'
+require 'table-save.lua'
 require 'bounds'
 require 'player'
 require 'gameconf'

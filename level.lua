@@ -1,4 +1,4 @@
-dofile('table-save.lua')
+require 'table-save.lua'
 
 Class = require 'hump.class'
 json = require 'util.dkjson'

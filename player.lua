@@ -19,10 +19,12 @@ Player = Class
 		self.depth = 5
 		self.sprite = Sprite(img)
 		self.movespeed = 500
+		
 		self.mbx, self.mby = 96, 64
-		self.movementBounds = Rectangle(vector(self.mbx, self.mby),
-										vector((screen.width / 2) - self.mby * 2,
-											   screen.height - self.mby * 2 - game.hud.vertSize))
+		local mbw = (screen.width / 2) - self.mby * 2
+		local mbh = screen.height - self.mby * 2 - game.hud.vertSize
+		self.movementBounds = Rectangle(vector(self.mbx, self.mby), vector(mbw ,mbh))
+
 		self.sprite.position = self.position
 		self.bounds = self.sprite:getBoundingRect()
 		self.bounds:shrink(vector(0, 64))
@@ -78,14 +80,16 @@ function Player:shooting(dt)
 	end
 
 	if love.keyboard.isDown("z") and self.fireTimer <= 0.0 then
-		gameObjects:register(Projectile(self.position + vector(self.bounds.dimensions.x / 2, 0), "PlayerShot"))
+		local projPos = self.position + vector(self.bounds.dimensions.x / 2, 0)
+		game.gameObjects:register(Projectile(projPos, "PlayerShot"))
 		self.fireTimer = self.fireTime
 	end
 end
 
 function Player:constrainPosition()
 	cx, cy = game.camera:pos()
-	cx, cy = cx - screen.width / (2 * game.camera.scale), cy - screen.height / (2 * game.camera.scale)
+	cx = cx - screen.width / (2 * game.camera.scale)
+	cy = cy - screen.height / (2 * game.camera.scale)
 	screenpos = self.position - vector(cx, cy)
 	if screenpos.y < self.movementBounds:top() then
 		self.position.y = self.movementBounds:top() + cy

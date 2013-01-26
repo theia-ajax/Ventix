@@ -14,15 +14,29 @@ Star = Class
 		self.speed = math.random() * -10
 		self.radius = game.stars.radius
 		cx, cy = game.camera:pos()
-		self.position = pos or vector(cx + screen.width / 2 + self.radius, 
-									  math.random(screen.height - game.hud.vertSize) + 
-									  			  (cy - screen.height / 2))
+		local starx = cx + screen.width / 2 + self.radius
+		local stary = math.random(screen.height - game.hud.vertSize) + (cy - screen.height / 2)
+		self.position = pos or vector(starx, stary)
 		self.color = {}
 		self.color.r = math.random(256) - 1
 		self.color.g = math.random(256) - 1
 		self.color.b = math.random(256) - 1
 	end
 }
+
+function Star:reset()
+	self.speed = math.random() * -10
+	self.radius = game.stars.radius
+	cx, cy = game.camera:pos()
+	local starx = cx + screen.width / 2 + self.radius
+	local stary = math.random(screen.height - game.hud.vertSize) + (cy - screen.height / 2)
+	self.position = vector(starx, stary)
+	self.color = {}
+	self.color.r = math.random(256) - 1
+	self.color.g = math.random(256) - 1
+	self.color.b = math.random(256) - 1
+	self.hidden = false
+end
 
 function Star:update(dt)
 	self.velocity = vector(self.speed, 0)

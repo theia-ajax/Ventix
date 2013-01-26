@@ -1,5 +1,6 @@
 Class = require 'hump.class'
 Timer = require 'hump.timer'
+Signal = require 'hump.signal'
 require 'stack'
 require 'queue'
 require 'gameobject'
@@ -63,7 +64,12 @@ function GameObjectManager:update(dt)
 	end
 
 	while self.destroyQueue:size() > 0 do
-		self:unregister(self.destroyQueue:pop())
+		local obj = self:find(self.destroyQueue:peek())
+		if not obj.reuse then
+			self:unregister(self.destroyQueue:pop())
+		else
+			obj.objPool:unregister(obj)
+		end
 	end
 
 	if game.debug.on then

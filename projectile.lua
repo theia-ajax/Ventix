@@ -24,6 +24,8 @@ Projectile = Class
 			self.moveMult = 1
 		end
 
+		self.depth = 50
+
 		self.movespeed = 1000 * self.moveMult
 		self.velocity = vector(self.movespeed, 0)
 		self.radius = 4
@@ -38,7 +40,9 @@ function Projectile:update(dt)
 	self.position = self.position + self.velocity * dt
 	self.bounds.position = self.position
 	cx, cy = game.camera:pos()
-	if self.position.x > cx + screen.width / 2 + 10 or self.position.x < cx - screen.width / 2 - 10 then
+	local boundR = cx + screen.width / 2 + self.radius
+	local boundL = cx - screen.width / 2 - self.radius
+	if self.position.x > boundR or self.position.x < boundL then
 		self.destroy = true
 	end
 end

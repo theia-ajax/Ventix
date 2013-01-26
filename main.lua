@@ -20,6 +20,7 @@ require 'numformat'
 require 'path'
 require 'trigger'
 require 'level'
+require 'objectpool'
 
 function love.load()
 	initGameConfig()
@@ -40,12 +41,13 @@ function love.load()
 	-- aObj:play(true, false, 0.05)
 	-- aObj:setFrame(1)
 
-	gameObjects = GameObjectManager()
+	game.gameObjects = GameObjectManager()
 	collisionManager = CollisionManager()
 
+	game.starPool = ObjectPool(200)
 	for i = 1, game.stars.initialCount do
-		gameObjects:register(Star(vector(math.random(screen.width), 
-										 math.random(screen.height - game.hud.vertSize))))
+		game.starPool:register(Star(vector(math.random(screen.width), 
+					 					   math.random(screen.height - game.hud.vertSize))))
 	end
 
 	text = Text("THIS IS THE HUD", "center", 
@@ -55,14 +57,15 @@ function love.load()
 
 	p = Player(love.graphics.newImage("assets/player.png"))
 	p.position = vector(200, 200)
-	gameObjects:register(p)
+	game.gameObjects:register(p)
 
 	for i = 1, 50 do
 		local cx, cy = game.camera:pos()
 		local e = Enemy(love.graphics.newImage("assets/enemy.png"))
-		e.position = vector(screen.width + 50 + (250 * i), math.random(64, screen.height - game.hud.vertSize) + 
-									  			  					  (cy - screen.height / 2) - 64)
-		gameObjects:register(e)
+		local ex = screen.width + 50 + (250 * i)
+		local ey = math.random(64, screen.height - game.hud.vertSize) + (cy - screen.height / 2) - 64
+		e.position = vector(ex, ey)
+		game.gameObjects:register(e)
 	end
 	
 	-- path = SplinePath()
@@ -78,9 +81,11 @@ function love.load()
 	                           love.graphics.getWidth(), 200, 4, console_disabled)
 	startup()
 
-	gameObjects:register(Trigger(function() print("Hit Trigger") end, 400))
+	game.gameObjects:register(Trigger(function() print("Hit Trigger") end, 400))
 
-	Timer.addPeriodic(game.stars.spawnRate, function() gameObjects:register(Star()) end)
+	if game.stars.spawnRate >= 0 then 
+		Timer.addPeriodic(game.stars.spawnRate, function() game.starPool:register(Star()) end)
+	end
 	Timer.addPeriodic(game.debug.gcUpdateRate, function() game.debug.gccount = collectgarbage("count") end)
 end
 
@@ -112,7 +117,7 @@ function love.keypressed(key, unicode)
 end
 
 function love.update(dt)
-	gameObjects:update(dt)
+	game.gameObjects:update(dt)
 	game.camera:move(game.scrollSpeed * dt, 0)
 	game.center.x, game.center.y = game.camera:pos()
 	game.center.y = (game.center.y + (game.center.y - game.hud.vertSize)) / 2
@@ -129,7 +134,7 @@ end
 function love.draw()
 	game.camera:attach()
 
-	gameObjects:draw()
+	game.gameObjects:draw()
 
 	if game.debug.on then
 		local cx, cy = game.center.x, game.center.y
@@ -166,7 +171,7 @@ function debugDraw()
 		love.graphics.rectangle("line", 5, 5, 200, 100)
 		love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 10, 10)
 		love.graphics.print("Garbage: "..format_num(game.debug.gccount), 10, 25)
-		love.graphics.print("GameObjects: "..tostring(gameObjects.debug.objCount), 10, 40)
+		love.graphics.print("GameObjects: "..tostring(game.gameObjects.debug.objCount), 10, 40)
 		love.graphics.print("Collidables: "..tostring(collisionManager.debug.objCount), 10, 55)
 		-- love.graphics.print("press 'd' to hide", 50, 90)
 	end

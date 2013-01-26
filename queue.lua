@@ -22,7 +22,7 @@ function Queue:pop()
 		return nil
 	end
 
-	result = self.data[self.head]
+	local result = self.data[self.head]
 	self.data[self.head] = nil
 	self.data.n = self.data.n - 1
 	self.head = self.head + 1

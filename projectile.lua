@@ -5,6 +5,7 @@ require 'sprite'
 require 'bounds'
 require 'gameconf'
 require 'collidable'
+require 'sprite'
 
 Projectile = Class
 {
@@ -30,10 +31,40 @@ Projectile = Class
 		self.velocity = vector(self.movespeed, 0)
 		self.radius = 4
 		self.bounds = Circle(self.position, self.radius)
+
+		self.sprite = Sprite(love.graphics.newImage("assets/bullet.png"))
 	end
 }
 
 function Projectile:init()
+end
+
+function Projectile:reset(...)
+	self.id = 0
+
+	self.position = arg[1]
+	local t = arg[2]
+	self.type = t or "PlayerShot"
+	if self.type == "PlayerShot" then
+		self.tags = {Enemy = true}
+		self.moveMult = 1
+	elseif self.type == "EnemyShot" then
+		self.tags = {Player = true}
+		self.moveMult = -1
+	else
+		self.moveMult = 1
+	end
+
+	self.depth = 50
+
+	self.movespeed = 1000 * self.moveMult
+	self.velocity = vector(self.movespeed, 0)
+	self.radius = 4
+	self.bounds = Circle(self.position, self.radius)
+
+	self.hidden = false
+
+	self.sprite.position = self.position
 end
 
 function Projectile:update(dt)
@@ -45,11 +76,12 @@ function Projectile:update(dt)
 	if self.position.x > boundR or self.position.x < boundL then
 		self.destroy = true
 	end
+
+	self.sprite.position = self.position
 end
 
 function Projectile:draw()
-	love.graphics.setColor(255, 255, 0)
-	love.graphics.circle("fill", self.position.x, self.position.y, self.radius)
+	self.sprite:draw()
 end
 
 function Projectile:onCollisionEnter(other, colPosition, colNormal)

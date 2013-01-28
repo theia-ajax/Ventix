@@ -1,0 +1,26 @@
+###############################################################################################################
+#####  ProFi, a lua profiler. This profile was generated on: 01/27/13 16:46:29
+#####  ProFi is created by Luke Perkin 2012 under the MIT Licence, www.locofilm.co.uk
+#####  Version 1.3. Get the most recent version at this gist: https://gist.github.com/2838755
+###############################################################################################################
+
+| TOTAL TIME = 0.103000
+| FILE                                              : FUNCTION                                : LINE                : TIME        : RELATIVE    : CALLED      |
+| collisionmanager.lua                              : update                                  :   69                : 0.103       : 100.00%     :       1     |
+| collidable.lua                                    : isColliding                             :   24                : 0.091       : 88.35%      :    1902     |
+| bounds.lua                                        : left                                    :   57                : 0.014       : 13.59%      :    1953     |
+| [C]                                               : sethook                                 :   -1                : 0.005       : 4.85%       :       1     |
+| bounds.lua                                        : right                                   :   61                : 0.002       : 1.94%       :     153     |
+| ProFi.lua                                         : stop                                    :   85                : 0.000       : 0.00%       :       1     |
+| [C]                                               : getTime                                 :   -1                : 0.000       : 0.00%       :       2     |
+| ProFi.lua                                         : shouldReturn                            :  199                : 0.000       : 0.00%       :       1     |
+| bounds.lua                                        : intersectsCirc                          :   85                : 0.000       : 0.00%       :    1800     |
+| ProFi.lua                                         : stopHooks                               :  238                : 0.000       : 0.00%       :       1     |
+| collisionmanager.lua                              : updateDebug                             :  106                : 0.000       : 0.00%       :       1     |
+| bounds.lua                                        : anonymous                               :   77                : 0.000       : 0.00%       :       0     |
+| bounds.lua                                        : anonymous                               :   85                : 0.000       : 0.00%       :       0     |
+| ProFi.lua                                         : startHooks                              :  234                : 0.000       : 0.00%       :       0     |
+| ProFi.lua                                         : start                                   :   67                : 0.000       : 0.00%       :       0     |
+| bounds.lua                                        : intersects                              :   15                : 0.000       : 0.00%       :    1902     |
+| bounds.lua                                        : intersectsRect                          :   77                : 0.000       : 0.00%       :     102     |
+| bounds.lua                                        : intersectsRect                          :  154                : 0.000       : 0.00%       :     900     |

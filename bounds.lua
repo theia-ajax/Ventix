@@ -83,18 +83,10 @@ function Rectangle:intersectsRect(rect)
 end
 
 function Rectangle:intersectsCirc(circ)
-	
-	-- Create a rectangle that is essentially a scaled up version of this rectangle based on the radius
-	-- of the circle.  If the circle's center is then located within this larger rectangle we know
-	-- that they intersect
-	local r = Rectangle(vector(self.position.x - circ.radius, self.position.y - circ.radius),
-				  vector(self.dimensions.x + circ.radius * 2, self.dimensions.y + circ.radius * 2))
-
-	if r:containsPoint(circ.position) then
-		return true
-	else
-		return false
-	end
+	return circ.position.x >= self:left() - circ.radius and
+		   circ.position.x <= self:right() + circ.radius and
+		   circ.position.y >= self:top() - circ.radius and
+		   circ.position.y <= self:bottom() + circ.radius
 end
 
 function Rectangle:containsPoint(vec)

@@ -41,7 +41,7 @@ function Enemy:update(dt)
 	end
 end
 
-function Enemy:onCollisionEnter(other, colPosition, colNormal)
+function Enemy:onCollisionEnter(other, ...)
 	if other.type == "PlayerShot" then
 		self:damage(10)
 		self.sprite.color = {255, 0, 0, 255}

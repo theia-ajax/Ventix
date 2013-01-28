@@ -24,18 +24,17 @@ Star = Class
 	end
 }
 
-function Star:reset()
+function Star:reset(...)
 	self.speed = math.random() * -10
 	self.radius = game.stars.radius
 	cx, cy = game.camera:pos()
 	local starx = cx + screen.width / 2 + self.radius
 	local stary = math.random(screen.height - game.hud.vertSize) + (cy - screen.height / 2)
-	self.position = vector(starx, stary)
+	self.position = arg[1] or vector(starx, stary)
 	self.color = {}
 	self.color.r = math.random(256) - 1
 	self.color.g = math.random(256) - 1
 	self.color.b = math.random(256) - 1
-	self.hidden = false
 end
 
 function Star:update(dt)

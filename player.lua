@@ -33,7 +33,7 @@ Player = Class
 		self.ouch = false
 		self.collPos = vector(0, 0)
 
-		self.fireTime = 0.05
+		self.fireTime = 0.02
 		self.fireTimer = 0.0
 	end
 }
@@ -81,7 +81,12 @@ function Player:shooting(dt)
 
 	if love.keyboard.isDown("z") and self.fireTimer <= 0.0 then
 		local projPos = self.position + vector(self.bounds.dimensions.x / 2, 0)
-		game.gameObjects:register(Projectile(projPos, "PlayerShot"))
+		game.bulletPool:register(projPos, "PlayerShot")
+		-- game.bulletPool:register(projPos + vector(0, 10), "PlayerShot")
+		-- game.bulletPool:register(projPos + vector(0, -10), "PlayerShot")
+		-- game.bulletPool:registerBatch({projPos, "PlayerShot"},
+		-- 							  {projPos + vector(0, 10), "PlayerShot"},
+		-- 							  {projPos + vector(0, -10), "PlayerShot"})
 		self.fireTimer = self.fireTime
 	end
 end
@@ -133,11 +138,11 @@ function Player:debugDraw()
 	game.camera:attach()
 end
 
-function Player:onCollisionEnter(other, colPosition, colNormal)
+function Player:onCollisionEnter(other, ...)
 	self.ouch = true
 end
 
-function Player:onCollisionStay(other, colPosition, colNormal)
+function Player:onCollisionStay(other, ...)
 	self.collPos = colPosition
 end
 

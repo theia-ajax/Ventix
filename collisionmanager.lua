@@ -100,9 +100,7 @@ function CollisionManager:update()
 		end
 	end
 
-	if game.debug.on then
-		self:updateDebug()
-	end
+	self:updateDebug()
 end
 
 function CollisionManager:updateDebug()

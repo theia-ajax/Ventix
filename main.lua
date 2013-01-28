@@ -7,6 +7,7 @@ anim = require 'mate.animation'
 animObject = require 'mate.animobject'
 atlasBatch = require 'mate.atlasbatch'
 Console = require 'love-console.console'
+ProFi = require 'ProFi'
 require 'table-save'
 require 'bounds'
 require 'player'
@@ -24,6 +25,10 @@ require 'objectpool'
 
 function love.load()
 	initGameConfig()
+
+	game.console = Console.new(love.graphics.newFont("love-console/VeraMono.ttf", 12),
+	                           love.graphics.getWidth(), 200, 4, console_disabled)	
+	startup()
 
 	love.graphics.setFont(love.graphics.newFont())
 
@@ -44,11 +49,14 @@ function love.load()
 	game.gameObjects = GameObjectManager()
 	collisionManager = CollisionManager()
 
-	game.starPool = ObjectPool(200)
+	game.starPool = ObjectPool("Star", 200)
 	for i = 1, game.stars.initialCount do
-		game.starPool:register(Star(vector(math.random(screen.width), 
-					 					   math.random(screen.height - game.hud.vertSize))))
+		game.starPool:register(vector(math.random(screen.width), 
+					 				  math.random(screen.height - game.hud.vertSize)))
 	end
+
+	game.bulletPool = ObjectPool("Projectile", 500)
+	game.bulletPool:preload()
 
 	text = Text("THIS IS THE HUD", "center", 
 				vector(screen.width / 2, screen.height - (game.hud.vertSize / 2)),
@@ -63,7 +71,7 @@ function love.load()
 		local cx, cy = game.camera:pos()
 		local e = Enemy(love.graphics.newImage("assets/enemy.png"))
 		local ex = screen.width + 50 + (250 * i)
-		local ey = math.random(64, screen.height - game.hud.vertSize) + (cy - screen.height / 2) - 64
+		local ey = math.random(64, screen.height - game.hud.vertSize) + (cy - screen.height / 2) - 32
 		e.position = vector(ex, ey)
 		game.gameObjects:register(e)
 	end
@@ -76,17 +84,14 @@ function love.load()
 	-- path:add(vector(250, 175), false)
 	-- path:add(vector(300, 100), false)
 	-- path:add(vector(300, 100), true)
-	
-	game.console = Console.new(love.graphics.newFont("love-console/VeraMono.ttf", 12),
-	                           love.graphics.getWidth(), 200, 4, console_disabled)
-	startup()
 
 	game.gameObjects:register(Trigger(function() print("Hit Trigger") end, 400))
 
 	if game.stars.spawnRate >= 0 then 
-		Timer.addPeriodic(game.stars.spawnRate, function() game.starPool:register(Star()) end)
+		Timer.addPeriodic(game.stars.spawnRate, function() game.starPool:register() end)
 	end
 	Timer.addPeriodic(game.debug.gcUpdateRate, function() game.debug.gccount = collectgarbage("count") end)
+
 end
 
 function console_disabled()
@@ -95,6 +100,7 @@ end
 
 function love.keypressed(key, unicode)
 	if key == "escape" then
+		ProFi:writeReport("Profile.txt")
 		love.event.push("quit")
 	end
 
@@ -122,7 +128,9 @@ function love.update(dt)
 	game.center.x, game.center.y = game.camera:pos()
 	game.center.y = (game.center.y + (game.center.y - game.hud.vertSize)) / 2
 
+	-- ProFi:start()
 	collisionManager:update()
+	-- ProFi:stop()
 
 	-- aObj:update(dt)
 
@@ -163,7 +171,7 @@ end
 
 
 function debugDraw()
-	if game.debug.on and game.debug.showHUD then
+	if game.debug.showHUD then
 		love.graphics.setFont(love.graphics.newFont(12))
 		love.graphics.setColor(0, 0, 0, 127)
 		love.graphics.rectangle("fill", 5, 5, 200, 100)
@@ -199,12 +207,11 @@ function clear()
 end
 
 function startup()
-	print("  Ventix  v"..game.version)
+	print("  Ventix  v"..game.version.."    ".._VERSION)
 	print()
 	print("  <Escape> or ~ leaves the console. Call quit() or exit() to quit.")
 	print("  Try hitting <Tab> to complete your current input.")
 	print("  Type help() for commands and usage")
-	print("  You can overwrite every love callback (but love.keypressed).")
 	print()
 
 	debughud(1)

@@ -25,7 +25,7 @@ GameObject = Class
 function GameObject:init()
 end
 
-function GameObject:reset()
+function GameObject:reset(...)
 end
 
 function GameObject:update(dt)

@@ -12,11 +12,12 @@ GameObjectManager = Class
 	function(self)
 		self.objects = {}
 		self.available = Stack()
+	
 		self.currentId = 1
 		self.destroyQueue = Queue()
 
 		self.debug = {
-				objCount = 0
+			objCount = 0
 		}
 	end
 }
@@ -65,16 +66,13 @@ function GameObjectManager:update(dt)
 
 	while self.destroyQueue:size() > 0 do
 		local obj = self:find(self.destroyQueue:peek())
-		if not obj.reuse then
-			self:unregister(self.destroyQueue:pop())
-		else
+		self:unregister(self.destroyQueue:pop())
+		if obj.reuse then
 			obj.objPool:unregister(obj)
 		end
 	end
 
-	if game.debug.on then
-		self:updateDebug()
-	end
+	self:updateDebug()
 end
 
 function GameObjectManager:updateDebug()

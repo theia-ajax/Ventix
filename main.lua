@@ -22,6 +22,7 @@ require 'path'
 require 'trigger'
 require 'level'
 require 'objectpool'
+require 'pathmanager'
 
 function love.load()
 	initGameConfig()
@@ -76,15 +77,29 @@ function love.load()
 		game.gameObjects:register(e)
 	end
 	
-	-- path = SplinePath()
-	-- path:add(vector(100, 100), false)
-	-- path:add(vector(100, 100), false)
-	-- path:add(vector(150, 150), false)
-	-- path:add(vector(200, 200), false)
-	-- path:add(vector(250, 175), false)
-	-- path:add(vector(300, 100), false)
-	-- path:add(vector(300, 100), true)
+	game.paths = PathManager()
 
+	path = SplinePath("spline-test")
+	path:add(vector(100, 100), false)
+	path:add(vector(100, 100), false)
+	path:add(vector(150, 150), false)
+	path:add(vector(200, 200), false)
+	path:add(vector(250, 175), false)
+	path:add(vector(300, 100), false)
+	path:add(vector(300, 100), true)
+
+	game.paths:add(path)
+
+	game.level = Level("test")
+
+	-- local level = Level("test", false)
+	-- _print(level.data)
+	-- level.data.paths = game.paths.paths
+	-- level:save()
+
+	path2 = game.paths:getCopy(path.name)
+	path2.position = path2.position + (vector.one * 100)
+	
 	game.gameObjects:register(Trigger(function() print("Hit Trigger") end, 400))
 
 	if game.stars.spawnRate >= 0 then 
@@ -161,7 +176,8 @@ function love.draw()
 
 	debugDraw()
 
-	-- path:draw()
+	path:draw()
+	path2:draw()
 
 	-- love.graphics.setColor(255, 255, 255)
 	-- aObj:draw(0, 300)

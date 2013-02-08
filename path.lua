@@ -4,7 +4,9 @@ vector = require 'hump.vector'
 Path = Class
 {
 	name = "Path",
-	function(self, points, interp, pos)
+	function(self, name, points, interp, pos)
+		self.name = name or "default"
+		self.pathtype = "path"
 		self.position = pos or vector.zero
 		self.points = points or {}
 		self.interp = interp or 100
@@ -40,12 +42,32 @@ function Path:draw()
 	end
 end
 
+function Path:softCopy()
+	local p
+
+	if self.pathtype == "linearpath" then
+		p = LinearPath()
+		p.length = self.length
+	elseif self.pathtype == "splinepath" then
+		p = SplinePath()
+	else
+		p = Path()
+	end
+
+	p.position = self.position:clone()
+	p.interp = self.interp
+	p.points = self.points
+	p.curve = self.curve
+	return p
+end
+
 LinearPath = Class
 {
 	name = "LinearPath",
 	inherits = Path,
-	function(self, points, interp, pos)
-		Path.construct(self, points, interp, pos)
+	function(self, name, points, interp, pos)
+		Path.construct(self, name, points, interp, pos)
+		self.pathtype = "linearpath"
 		self.length = 0
 		self.curve = {n = 0}
 		self:calcCurve()
@@ -122,8 +144,9 @@ SplinePath = Class
 {
 	name = "SplinePath",
 	inherits = Path,
-	function(self, points, interp, pos)
-		Path.construct(self, points, interp, pos)
+	function(self, name, points, interp, pos)
+		Path.construct(self, name, points, interp, pos)
+		self.pathtype = "splinepath"
 		self.curve = {n = 0}
 		self:calcCurve()
 	end	
@@ -163,12 +186,12 @@ end
 
 function SplinePath:draw()
 	local px, py = self.position.x, self.position.y
-
 	if #self.points > 1 then
 		love.graphics.setColor(0, 255, 255)
 		for k, v in ipairs(self.points) do
 			love.graphics.circle("line", v.x + px, v.y + py, 4)
 		end
+
 		love.graphics.setColor(0, 255, 0)
 		for i = 1, #self.points - 1 do
 			local p1 = self.points[i]

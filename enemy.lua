@@ -43,7 +43,7 @@ end
 
 function Enemy:onCollisionEnter(other, ...)
 	if other.type == "PlayerShot" then
-		self:damage(10)
+		self:damage(25)
 		self.sprite.color = {255, 0, 0, 255}
 		Timer.add(0.1, function() self.sprite.color = {255, 255, 255, 255} end)
 	end

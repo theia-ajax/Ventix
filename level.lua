@@ -4,13 +4,19 @@ Class = require 'hump.class'
 vector = require 'hump.vector'
 require 'trigger'
 require 'path'
+require 'pathmanager'
 
 Level = Class
 {
 	name = "Level",
 	function(self, name, load)
 		self.loaded = false
-		self.data = {}
+		self.data = {
+			paths = nil,
+			enemies = nil,
+			triggers = nil
+		}
+		self.paths = PathManager()
 		self.name = name
 		if load == nil then load = true end
 		if name and load then 
@@ -30,6 +36,12 @@ function Level:load(name)
 	if err then
 		print(err)
 		return false
+	end
+
+	if self.data.paths then
+		for k, v in pairs(self.data.paths) do
+			self.paths:add(v)
+		end
 	end
 
 	self.loaded = true

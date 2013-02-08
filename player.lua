@@ -33,7 +33,7 @@ Player = Class
 		self.ouch = false
 		self.collPos = vector(0, 0)
 
-		self.fireTime = 0.02
+		self.fireTime = 0.2
 		self.fireTimer = 0.0
 	end
 }

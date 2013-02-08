@@ -79,27 +79,43 @@ function love.load()
 	
 	game.paths = PathManager()
 
-	path = SplinePath("spline-test")
-	path:add(vector(100, 100), false)
-	path:add(vector(100, 100), false)
-	path:add(vector(150, 150), false)
-	path:add(vector(200, 200), false)
-	path:add(vector(250, 175), false)
-	path:add(vector(300, 100), false)
-	path:add(vector(300, 100), true)
+	-- path = SplinePath("spline-test")
+	-- path:add(vector(100, 100), false)
+	-- path:add(vector(100, 100), false)
+	-- path:add(vector(150, 150), false)
+	-- path:add(vector(200, 200), false)
+	-- path:add(vector(250, 175), false)
+	-- path:add(vector(300, 100), false)
+	-- path:add(vector(300, 100), true)
 
-	game.paths:add(path)
+	-- game.paths:add(path)
 
 	game.level = Level("test")
 
+	-- pathModel = {
+	-- 	name = "spline-test",
+	-- 	position = vector(0, 0),
+	-- 	pathtype = "spline",
+	-- 	interp = 100,
+	-- 	points = {
+	-- 		vector(100, 100),
+	-- 		vector(100, 100),
+	-- 		vector(150, 150),
+	-- 		vector(200, 200),
+	-- 		vector(250, 175),
+	-- 		vector(300, 100),
+	-- 		vector(300, 100)
+	-- 	}
+	-- }
+
 	-- local level = Level("test", false)
+	-- table.insert(level.data.paths, pathModel)
 	-- _print(level.data)
 	-- level.data.paths = game.paths.paths
 	-- level:save()
 
-	path2 = game.paths:getCopy(path.name)
-	path2.position = path2.position + (vector.one * 100)
-	
+	path = game.level.paths:getCopy("spline-test")
+		
 	game.gameObjects:register(Trigger(function() print("Hit Trigger") end, 400))
 
 	if game.stars.spawnRate >= 0 then 
@@ -177,8 +193,7 @@ function love.draw()
 	debugDraw()
 
 	path:draw()
-	path2:draw()
-
+	
 	-- love.graphics.setColor(255, 255, 255)
 	-- aObj:draw(0, 300)
 

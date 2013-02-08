@@ -3,7 +3,7 @@ require 'table-save'
 Class = require 'hump.class'
 vector = require 'hump.vector'
 require 'trigger'
-require 'path'
+Paths = require 'path'
 require 'pathmanager'
 
 Level = Class
@@ -12,9 +12,9 @@ Level = Class
 	function(self, name, load)
 		self.loaded = false
 		self.data = {
-			paths = nil,
-			enemies = nil,
-			triggers = nil
+			paths = {},
+			enemies = {},
+			triggers = {}
 		}
 		self.paths = PathManager()
 		self.name = name
@@ -40,7 +40,7 @@ function Level:load(name)
 
 	if self.data.paths then
 		for k, v in pairs(self.data.paths) do
-			self.paths:add(v)
+			self.paths:add(Paths.fromModel(v))
 		end
 	end
 

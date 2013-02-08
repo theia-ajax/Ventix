@@ -45,10 +45,10 @@ end
 function Path:softCopy()
 	local p
 
-	if self.pathtype == "linearpath" then
+	if self.pathtype == "linear" then
 		p = LinearPath()
 		p.length = self.length
-	elseif self.pathtype == "splinepath" then
+	elseif self.pathtype == "spline" then
 		p = SplinePath()
 	else
 		p = Path()
@@ -67,7 +67,7 @@ LinearPath = Class
 	inherits = Path,
 	function(self, name, points, interp, pos)
 		Path.construct(self, name, points, interp, pos)
-		self.pathtype = "linearpath"
+		self.pathtype = "linear"
 		self.length = 0
 		self.curve = {n = 0}
 		self:calcCurve()
@@ -146,7 +146,7 @@ SplinePath = Class
 	inherits = Path,
 	function(self, name, points, interp, pos)
 		Path.construct(self, name, points, interp, pos)
-		self.pathtype = "splinepath"
+		self.pathtype = "spline"
 		self.curve = {n = 0}
 		self:calcCurve()
 	end	
@@ -209,3 +209,16 @@ function SplinePath:draw()
 		end
 	end
 end
+
+local function fromModel(pathModel)
+	local pos = vector(pathModel.position.x, pathModel.position.y)
+	if pathModel.pathtype == "linear" then
+		return LinearPath(pathModel.name, pathModel.points, pathModel.interp, pos)
+	elseif pathModel.pathtype == "spline" then
+		return SplinePath(pathModel.name, pathModel.points, pathModel.interp, pos)
+	else
+		return Path(pathModel.name, pathModel.points, pathModel.interp, pathModel.position)
+	end
+end
+
+return { fromModel = fromModel }

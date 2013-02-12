@@ -39,6 +39,11 @@ function Enemy:update(dt)
 	if not self.isAlive then
 		self.destroy = true
 	end
+
+	cx = game.camera:pos()
+	if self.position.x < cx - screen.width / 2 - self.bounds.dimensions.x then
+		self.destroy = true
+	end
 end
 
 function Enemy:onCollisionEnter(other, ...)

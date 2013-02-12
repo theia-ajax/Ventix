@@ -3,7 +3,7 @@ require 'table-save'
 Class = require 'hump.class'
 vector = require 'hump.vector'
 require 'trigger'
-Paths = require 'path'
+local Paths = require 'path'
 require 'pathmanager'
 
 Level = Class

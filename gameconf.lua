@@ -36,4 +36,9 @@ function initGameConfig()
 		x = 0,
 		y = 0
 	}
+
+	game.screen = {
+		width = screen.width,
+		height = screen.height - game.hud.vertSize
+	}
 end

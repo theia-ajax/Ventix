@@ -12,10 +12,10 @@ Player = Class
 {
 	name = "Player",
 	inherits = {GameObject, Collidable},
-	function(self, img)
-		GameObject.construct(self, vector(30, screen.height / 2))
+	function(self, img, pos)
+		GameObject.construct(self, pos or vector(100, game.screen.height / 2))
 		Collidable.construct(self, "Player")
-		self.tags = {Enemy = true, EnemyShot = true, Trigger =true}
+		self.tags = {Enemy = true, EnemyShot = true, Trigger = true}
 		self.depth = 5
 		self.sprite = Sprite(img)
 		self.movespeed = 500

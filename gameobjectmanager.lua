@@ -23,12 +23,13 @@ GameObjectManager = Class
 }
 
 function GameObjectManager:register(obj)
-	if obj.id > 0 then return end
+	if obj.id > 0 then return nil end
 	obj.id = self:nextId()
 	self.objects[obj.id] = obj
 	if obj:is_a(Collidable) then
 		collisionManager:register(obj)
 	end
+	return obj
 end
 
 function GameObjectManager:unregister(id)

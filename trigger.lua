@@ -16,21 +16,24 @@ Trigger = Class
 		self.tags = { Player = true }
 		self.depth = 1
 		self.enter = enter or 'onTriggerEnter'
+		self.enterTable = { self.id, triggerType = "default" }
 		self.stay = stay or 'onTriggerStay'
+		self.stayTable = { self.id, triggerType = "default" }
 		self.exit = exit or 'onTriggerExit'
+		self.exitTable = { self.id, triggerType = "default" }
 	end
 }
 
-function Trigger:onCollisionEnter(other, position, normal)
-	if self.enter then Signal.emit(self.enter, self.id) end
+function Trigger:onCollisionEnter(other, ...)
+	if self.enter then Signal.emit(self.enter, self.enterTable) end
 end
 
-function Trigger:onCollisionStay(other, position, normal)
-	if self.stay then Signal.emit(self.stay, self.id) end
+function Trigger:onCollisionStay(other, ...)
+	if self.stay then Signal.emit(self.stay, self.stayTable) end
 end
 
-function Trigger:onCollisionExit(other, position, normal)
-	if self.exit then Signal.emit(self.exit, self.id) end
+function Trigger:onCollisionExit(other, ...)
+	if self.exit then Signal.emit(self.exit, self.exitTable) end
 end
 
 function Trigger:draw()
